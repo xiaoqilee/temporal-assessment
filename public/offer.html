@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Juniper Salon · Earlier appointment</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="offer-page">
+    <main class="card phone">
+      <p class="muted small">Simulated text message from Juniper Salon</p>
+      <h1>An earlier appointment opened up</h1>
+      <div id="offer"><p class="muted">Loading…</p></div>
+      <div id="actions" class="controls" hidden>
+        <button id="accept">Yes, book me</button>
+        <button id="decline" class="secondary">No thanks</button>
+      </div>
+      <p id="result" class="result" hidden></p>
+    </main>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const openingId = params.get("opening");
+      const clientId = params.get("client");
+      const offerEl = document.querySelector("#offer");
+      const actions = document.querySelector("#actions");
+      const resultEl = document.querySelector("#result");
+      let expiresAt;
+
+      async function load() {
+        const response = await fetch(`/api/openings/${encodeURIComponent(openingId)}`);
+        if (!response.ok) {
+          offerEl.innerHTML = "<p>This offer could not be found.</p>";
+          return;
+        }
+        const state = await response.json();
+        const me = state.candidates.find((c) => c.client.id === clientId);
+        const o = state.opening;
+        const when = new Date(o.startsAt).toLocaleString([], { weekday: "long", month: "long", day: "numeric", hour: "numeric", minute: "2-digit" });
+        offerEl.innerHTML = `
+          <p>Hi ${me ? me.client.name.split(" ")[0] : "there"}, a spot you asked for is available:</p>
+          <dl>
+            <dt>Service</dt><dd>${o.service}</dd>
+            <dt>Stylist</dt><dd>${o.stylist}</dd>
+            <dt>When</dt><dd>${when}</dd>
+          </dl>
+          <p class="countdown" id="countdown"></p>`;
+        expiresAt = me?.expiresAt;
+        actions.hidden = false;
+        tick();
+      }
+
+      function tick() {
+        const el = document.querySelector("#countdown");
+        if (!el || !expiresAt) return;
+        const s = Math.max(0, Math.round((new Date(expiresAt) - Date.now()) / 1000));
+        el.textContent = s > 0 ? `Please reply within ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : "This offer's reply window has passed.";
+      }
+      setInterval(tick, 1000);
+
+      async function respond(accept) {
+        actions.querySelectorAll("button").forEach((b) => (b.disabled = true));
+        const response = await fetch(`/api/openings/${encodeURIComponent(openingId)}/respond`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ clientId, accept }),
+        });
+        const result = await response.json();
+        resultEl.textContent = result.message ?? result.error;
+        resultEl.className = `result ${result.outcome ?? "error"}`;
+        resultEl.hidden = false;
+        actions.hidden = true;
+      }
+      document.querySelector("#accept").onclick = () => respond(true);
+      document.querySelector("#decline").onclick = () => respond(false);
+      load();
+    </script>
+  </body>
+</html>
