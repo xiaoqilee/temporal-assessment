@@ -67,3 +67,7 @@ dd { margin: 0; font-weight: 600; }
 .result.booked { background: var(--accent-soft); color: var(--accent); }
 .result.declined { background: #f1f0ec; }
 .result.no_longer_available, .result.error { background: var(--danger-soft); color: var(--danger); }
+.add-client { margin: 10px 0 14px; }
+fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0; }
+legend { font-size: 0.85rem; color: var(--muted); padding: 0 4px; }
+label.check { display: inline-flex; align-items: center; gap: 4px; color: var(--ink); font-size: 0.9rem; }

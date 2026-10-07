@@ -17,12 +17,12 @@ Stop with `Ctrl+C`, then `npm run stop` to stop the Temporal container.
 
 Other commands: `npm test` (Workflow tests, no Docker needed), `npm run typecheck`.
 
-## Try it (2 minutes)
+## Try it (about 3 minutes)
 
-1. Open <http://localhost:3000>. The waitlist at the bottom is pre-filled with fictional clients.
-2. Post an opening: **Cut & style · Carla · any afternoon time · reply window "30 seconds (demo)"**. Three clients match (Ava, Chloe, Finn). The rest are listed as not eligible, with the reason.
+1. Open <http://localhost:3000>. The waitlist at the bottom is pre-filled with fictional clients. Staff can add more with **+ Add a client** (name, mobile, service, preferred stylist, availability).
+2. Post an opening: **Cut & style · Carla · any afternoon time · reply window "1 minute (quick demo)"**. Three clients match (Ava, Chloe, Finn). The rest are listed as not eligible, with the reason.
 3. Ava gets the offer first. Click **Open their text ↗** to see the client's (simulated) text and **decline**. The offer moves to Chloe.
-4. Don't reply for Chloe. After 30 seconds she times out and the offer moves to Finn on its own.
+4. Don't reply for Chloe. After 1 minute she times out and the offer moves to Finn on its own.
 5. Accept as Finn. The opening shows **Filled**. Open Chloe's old link and press "Yes": she's told it's **no longer available**.
 6. Also try **Cancel current offer** and **Stop offering** on a new opening.
 
@@ -34,7 +34,7 @@ Other commands: `npm test` (Workflow tests, no Docker needed), `npm run typechec
 | --- | --- |
 | "We lose track of who we contacted and who's next" | Each opening has a live view: who has the offer, who declined or timed out, who's still waiting, and an activity log. |
 | Competing acceptances upset a client | One offer at a time. Accept/decline is a Temporal **Update** handled one at a time inside the Workflow, so only the first valid "yes" books. Late replies are told it's no longer available. |
-| No consistent cutoff; depends on someone remembering | A **durable timer** (15 min default, 30 s for demos) moves on automatically. |
+| No consistent cutoff; depends on someone remembering | A **durable timer** (15 min default, 1 min for quick demos) moves on automatically. |
 | Earliest sign-up first, matching service, availability, stylist | Eligibility and ordering are applied when the opening is posted. Skipped clients show the reason. |
 | Mark unfilled if nobody accepts; staff can stop or cancel | Final status **Filled / Unfilled / Stopped**. Staff **Signals** for "Cancel current offer" and "Stop offering". |
 
@@ -51,7 +51,7 @@ Other commands: `npm test` (Workflow tests, no Docker needed), `npm run typechec
 
 - **Text messages** are simulated: the worker logs each SMS, and the "Open their text" link stands in for the link a client would tap. A real SMS provider (e.g. Twilio) would replace `sendText` in `src/activities.ts`, with reply-by-text handling.
 - **Square** is simulated: cancellations are posted by hand, and `bookAppointment` logs a fake confirmation instead of calling Square's Bookings API.
-- **Waitlist** is an in-memory sample list standing in for the Google Sheet. It resets when the app restarts. Openings themselves are durable in Temporal.
+- **Waitlist** replaces the Google Sheet: staff add clients from the dashboard, as they do today. It's kept in memory and resets when the app restarts (a real version would use a database). Openings themselves are durable in Temporal.
 - No login, no real client data, and no multi-location support. Everything runs locally.
 
 ## Repository map

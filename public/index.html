@@ -28,7 +28,7 @@
             <select name="replyWindowSeconds">
               <option value="900" selected>15 minutes (salon default)</option>
               <option value="120">2 minutes</option>
-              <option value="30">30 seconds (demo only)</option>
+              <option value="60">1 minute (quick demo)</option>
             </select>
           </label>
           <button type="submit">Start offering</button>
@@ -42,7 +42,40 @@
       </section>
 
       <section class="card">
-        <h2>Waitlist <span class="muted small">(simulated Google Sheet, earliest first)</span></h2>
+        <h2>Waitlist <span class="muted small">(replaces the Google Sheet, earliest first)</span></h2>
+        <details id="add-client-panel">
+          <summary>+ Add a client who wants an earlier appointment</summary>
+          <form id="client-form" class="grid add-client">
+            <label>Name <input name="name" required /></label>
+            <label>Mobile number <input name="phone" type="tel" required placeholder="(555) 010-0000" /></label>
+            <label>Service
+              <select name="service">
+                <option>Cut &amp; style</option><option>Color</option><option>Trim</option><option>Blowout</option>
+              </select>
+            </label>
+            <label>Preferred stylist
+              <select name="stylistPreference"><option>Any</option><option>Carla</option><option>Lena</option><option>Sam</option></select>
+            </label>
+            <fieldset>
+              <legend>Available days</legend>
+              <label class="check"><input type="checkbox" name="availableDays" value="Mon" checked />Mon</label>
+              <label class="check"><input type="checkbox" name="availableDays" value="Tue" checked />Tue</label>
+              <label class="check"><input type="checkbox" name="availableDays" value="Wed" checked />Wed</label>
+              <label class="check"><input type="checkbox" name="availableDays" value="Thu" checked />Thu</label>
+              <label class="check"><input type="checkbox" name="availableDays" value="Fri" checked />Fri</label>
+              <label class="check"><input type="checkbox" name="availableDays" value="Sat" checked />Sat</label>
+              <label class="check"><input type="checkbox" name="availableDays" value="Sun" />Sun</label>
+            </fieldset>
+            <fieldset>
+              <legend>Available times</legend>
+              <label class="check"><input type="checkbox" name="availableTimes" value="morning" checked />Morning</label>
+              <label class="check"><input type="checkbox" name="availableTimes" value="afternoon" checked />Afternoon</label>
+              <label class="check"><input type="checkbox" name="availableTimes" value="evening" />Evening</label>
+            </fieldset>
+            <button type="submit">Add to waitlist</button>
+          </form>
+          <p id="client-error" class="error" hidden></p>
+        </details>
         <table>
           <thead><tr><th>Joined</th><th>Name</th><th>Service</th><th>Stylist</th><th>Days</th><th>Times</th></tr></thead>
           <tbody id="waitlist"></tbody>

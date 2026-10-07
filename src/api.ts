@@ -33,14 +33,14 @@ app.get("/api/waitlist", (_request, response) => {
 
 app.post("/api/waitlist", (request, response) => {
   const body = request.body as Partial<WaitlistClient>;
-  if (!body.name || !body.service || !body.availableDays?.length || !body.availableTimes?.length) {
-    response.status(400).json({ error: "Name, service, days and times are required." });
+  if (!body.name || !body.phone || !body.service || !body.availableDays?.length || !body.availableTimes?.length) {
+    response.status(400).json({ error: "Name, mobile number, service, at least one day and one time are required." });
     return;
   }
   const client: WaitlistClient = {
     id: `c-${randomUUID().slice(0, 8)}`,
     name: body.name,
-    phone: body.phone || "(555) 010-0000",
+    phone: body.phone,
     service: body.service,
     stylistPreference: body.stylistPreference ?? "Any",
     availableDays: body.availableDays,

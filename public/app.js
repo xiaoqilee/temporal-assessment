@@ -61,6 +61,35 @@ form.addEventListener("submit", async (event) => {
   await refresh();
 });
 
+const clientForm = document.querySelector("#client-form");
+const clientError = document.querySelector("#client-error");
+clientForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  clientError.hidden = true;
+  const data = new FormData(clientForm);
+  const body = {
+    name: data.get("name"),
+    phone: data.get("phone"),
+    service: data.get("service"),
+    stylistPreference: data.get("stylistPreference"),
+    availableDays: data.getAll("availableDays"),
+    availableTimes: data.getAll("availableTimes"),
+  };
+  const response = await fetch("/api/waitlist", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    clientError.textContent = (await response.json()).error ?? "Could not add the client.";
+    clientError.hidden = false;
+    return;
+  }
+  clientForm.name.value = "";
+  clientForm.phone.value = "";
+  await loadWaitlist();
+});
+
 openingsEl.addEventListener("click", async (event) => {
   const button = event.target.closest("button[data-action]");
   if (!button) return;
