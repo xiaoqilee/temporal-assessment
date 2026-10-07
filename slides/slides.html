@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Juniper Salon · Filling cancellations</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+  :root {
+    --bg: #f6f4ef; --ink: #1f2a24; --muted: #5f6b64; --accent: #2f6b4f;
+    --accent-soft: #e4f0e9; --warn: #9a5b00; --warn-soft: #fbf0dc;
+    --danger: #a33a2c; --danger-soft: #f8e3df; --line: #e3e0d8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body { font-family: "Segoe UI", system-ui, sans-serif; color: var(--ink);
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { width: 13.333in; height: 7.5in; padding: 0.6in 0.75in 0.5in; position: relative;
+           page-break-after: always; break-after: page; overflow: hidden; background: var(--bg);
+           display: flex; flex-direction: column; }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .kicker { color: var(--accent); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 13pt; margin: 0 0 6px; }
+  h1 { font-size: 34pt; margin: 0 0 0.25in; line-height: 1.1; }
+  h2 { font-size: 15pt; margin: 0 0 8px; color: var(--accent); }
+  p, li { font-size: 15pt; line-height: 1.4; }
+  ul, ol { margin: 0; padding-left: 1.2em; }
+  li { margin-bottom: 7px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4in; flex: 1; min-height: 0; }
+  .cols.wide-right { grid-template-columns: 0.85fr 1.15fr; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 0.22in 0.28in; }
+  .card.bad { border-left: 6px solid var(--danger); }
+  .card.good { border-left: 6px solid var(--accent); }
+  .card.warn { border-left: 6px solid var(--warn); }
+  .quote { font-size: 19pt; font-style: italic; color: var(--accent); background: var(--accent-soft);
+           border-radius: 14px; padding: 0.2in 0.3in; margin-top: 0.25in; }
+  .quote small { display: block; font-style: normal; font-size: 12pt; color: var(--muted); margin-top: 4px; }
+  img.shot { width: 100%; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
+  .steps { list-style: none; padding: 0; counter-reset: step; }
+  .steps li { font-size: inherit; counter-increment: step; position: relative; padding-left: 0.5in; margin-bottom: 12px; }
+  .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 0.34in; height: 0.34in;
+                      border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 13pt;
+                      display: flex; align-items: center; justify-content: center; }
+  .footer { position: absolute; bottom: 0.25in; left: 0.75in; right: 0.75in; display: flex; justify-content: space-between;
+            color: var(--muted); font-size: 10.5pt; }
+  .tag { display: inline-block; font-size: 11pt; padding: 2px 10px; border-radius: 999px; font-weight: 600; }
+  .tag.real { background: var(--accent-soft); color: var(--accent); }
+  .tag.sim { background: var(--warn-soft); color: var(--warn); }
+  .tag.out { background: var(--danger-soft); color: var(--danger); }
+  .metric { font-size: 14pt; }
+  .metric b { color: var(--accent); }
+  .muted { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- 1. Problem -->
+<section class="slide">
+  <p class="kicker">Juniper Salon · Prepared for Lena</p>
+  <h1>Filling last-minute cancellations without the chasing</h1>
+  <p style="margin:0 0 0.2in" class="muted">Today: a cancellation shows up in Square → you or Carla check the Google Sheet → text matching clients from the salon phone → track replies by memory.</p>
+  <div class="cols">
+    <div class="card bad">
+      <h2>What goes wrong</h2>
+      <ul>
+        <li><b>"We lose track of who we contacted and who's next"</b>, so the chair sits empty</li>
+        <li><b>Two clients both said yes</b> and one ended up upset</li>
+        <li><b>No set time to wait for replies</b>; it depends on whether someone remembers to follow up</li>
+        <li>Most cancellations come <b>within 48 hours</b>, sometimes just hours before</li>
+      </ul>
+    </div>
+    <div class="card good">
+      <h2>What success looks like</h2>
+      <ul>
+        <li><b>Fewer openings sitting empty</b></li>
+        <li><b>Much less time</b> chasing people and checking the sheet</li>
+        <li><b>No double-booking</b></li>
+      </ul>
+      <div class="quote" style="font-size:16pt;margin-top:0.15in">"The biggest thing is moving reliably to the next person without double-booking."<small>Lena</small></div>
+    </div>
+  </div>
+  <div class="footer"><span>Juniper Salon waitlist prototype</span><span>1 / 5</span></div>
+</section>
+
+<!-- 2. Prototype behavior -->
+<section class="slide">
+  <p class="kicker">What the prototype does</p>
+  <h1>Post it once. It works through the list for you.</h1>
+  <ol class="steps" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.2in;margin-bottom:0.1in;font-size:13.5pt">
+    <li><b>Slot opens.</b> Staff post the service, stylist and time.</li>
+    <li><b>Best match gets the offer:</b> right service, stylist and availability, earliest sign-up first.</li>
+    <li><b>They have 15 minutes</b> to tap Yes or No.</li>
+    <li><b>Yes = booked.</b> No or no reply = next person, automatically.</li>
+  </ol>
+  <div class="cols" style="grid-template-columns:1.5fr 1fr;gap:0.35in;align-items:start">
+    <figure style="margin:0">
+      <img class="shot" src="img/dashboard.png" style="max-height:3.0in;width:auto;max-width:100%" alt="Staff dashboard" />
+      <figcaption class="muted" style="font-size:12pt;margin-top:6px"><b>Staff see</b> who has the offer and the time left, who declined or timed out, and who's next. They can also cancel an offer or stop.</figcaption>
+    </figure>
+    <figure style="margin:0">
+      <img class="shot" src="img/offer.png" style="max-height:3.0in;width:auto;max-width:100%" alt="Client offer page" />
+      <figcaption class="muted" style="font-size:12pt;margin-top:6px"><b>Clients see</b> the appointment details, a countdown, and Yes / No.</figcaption>
+    </figure>
+  </div>
+  <div class="footer"><span>If nobody accepts, the opening is marked Unfilled</span><span>2 / 5</span></div>
+</section>
+
+<!-- 3. Reliability -->
+<section class="slide">
+  <p class="kicker">How it handles things going wrong</p>
+  <h1>The problems you described, handled automatically</h1>
+  <div class="cols" style="grid-template-columns:1fr 1fr;gap:0.35in">
+    <div style="display:flex;flex-direction:column;gap:0.15in">
+      <div class="card good">
+        <h2>"Depends on whether we remember to follow up"</h2>
+        <p style="margin:0">It waits for each reply and <b>moves on by itself</b> after 15 minutes.</p>
+      </div>
+      <div class="card good">
+        <h2>"Competing acceptances caused confusion"</h2>
+        <p style="margin:0"><b>Only one client can get the slot.</b> A late "yes" is told it's no longer available.</p>
+      </div>
+      <div class="card good">
+        <h2>"We lose track of who's next"</h2>
+        <p style="margin:0">Every offer is recorded. <b>If the computer restarts mid-offer, it picks up where it left off</b>, and failed texts are retried.</p>
+      </div>
+    </div>
+    <figure style="margin:0">
+      <img class="shot" src="img/webui-header.png" alt="Temporal Web UI: opening workflow, Completed" />
+      <img class="shot" src="img/webui-events.png" style="margin-top:8px" alt="Event history including a retried text and a refused late acceptance" />
+      <figcaption class="muted" style="font-size:12pt;margin-top:6px"><b>Behind the scenes: every offer is tracked.</b> This filled opening's history even shows a text being retried and a late "yes" being turned away. (Powered by Temporal; we tested it by shutting the app down mid-offer.)</figcaption>
+    </figure>
+  </div>
+  <div class="footer"><span>Juniper Salon waitlist prototype</span><span>3 / 5</span></div>
+</section>
+
+<!-- 4. Simulated / excluded -->
+<section class="slide">
+  <p class="kicker">Being clear about the prototype</p>
+  <h1>What's real, what's simulated, what's left out</h1>
+  <div class="cols" style="grid-template-columns: 1fr 1fr 1fr; gap: 0.3in; flex: 0 1 auto; align-items: stretch">
+    <div class="card good">
+      <p><span class="tag real">Working now</span></p>
+      <ul>
+        <li>Matching and earliest-first order</li>
+        <li>One offer at a time, 15-minute reply window</li>
+        <li>Automatic move to the next person</li>
+        <li>No double-booking; late replies told it's taken</li>
+        <li>Stop / cancel controls and live status</li>
+        <li>Staff adding clients to the waitlist</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <p><span class="tag sim">Simulated</span></p>
+      <ul>
+        <li><b>Text messages:</b> shown as an on-screen page, not sent to real phones</li>
+        <li><b>Square:</b> cancellations are entered by hand; the booking is a pretend confirmation</li>
+        <li><b>Waitlist:</b> sample clients instead of your Google Sheet; resets when the app restarts</li>
+      </ul>
+    </div>
+    <div class="card bad">
+      <p><span class="tag out">Not included yet</span></p>
+      <ul>
+        <li>Clients replying "YES" by text</li>
+        <li>Staff logins</li>
+        <li>Reports on filled vs. empty slots</li>
+        <li>Rules like "only if 2+ hours' notice"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>Everything runs on a local computer; no real client data was used</span><span>4 / 5</span></div>
+</section>
+
+<!-- 5. Next step -->
+<section class="slide">
+  <p class="kicker">Practical next step</p>
+  <h1>Pilot it on Carla's cancellations for two weeks</h1>
+  <div class="cols" style="grid-template-columns:1fr 1fr 1fr;gap:0.3in;flex:0 1 auto;align-items:stretch">
+    <div class="card">
+      <h2>What we'd do</h2>
+      <ul>
+        <li>Send <b>real texts</b> from a salon number; clients reply YES or NO</li>
+        <li>Load your current waitlist from the Google Sheet</li>
+        <li>Carla posts each cancellation in the app (Square stays as-is)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>What we need from you</h2>
+      <ul>
+        <li>A copy of the waitlist sheet (so we match its columns)</li>
+        <li>OK to text waitlist clients from a salon number</li>
+        <li>10 minutes with Carla at the end of each week</li>
+      </ul>
+    </div>
+    <div class="card good">
+      <h2>How we'll know it worked</h2>
+      <ul>
+        <li><b>Fewer empty chairs:</b> share of cancellations re-booked, vs. today</li>
+        <li><b>Less chasing:</b> staff time spent on follow-ups</li>
+        <li><b>Zero</b> double-bookings</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:0.25in" class="muted">If it works: connect Square so a cancellation starts the offers automatically, then roll out to every stylist.</p>
+  <div class="footer"><span>Juniper Salon waitlist prototype</span><span>5 / 5</span></div>
+</section>
+
+</body>
+</html>

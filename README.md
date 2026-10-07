@@ -64,3 +64,4 @@ Other commands: `npm test` (Workflow tests, no Docker needed), `npm run typechec
 - `public/`: staff dashboard (`index.html`) and client offer page (`offer.html`)
 - `tests/workflow.test.ts`: Workflow tests with time skipping
 - `evidence/`: Temporal Web UI screenshot
+- `slides/juniper-salon-prototype.pdf`: 5-slide presentation for Lena (source: `slides/slides.html`)
