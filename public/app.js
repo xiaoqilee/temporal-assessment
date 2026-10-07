@@ -122,7 +122,7 @@ function renderOpening(state) {
       (c, i) => `<li class="status-${c.status}">
         <span>${i + 1}. ${escapeHtml(c.client.name)}</span>
         <span class="pill">${STATUS_LABELS[c.status]}</span>
-        ${c.status === "offered" ? `<a href="/offer.html?opening=${encodeURIComponent(opening.id)}&client=${encodeURIComponent(c.client.id)}" target="_blank">Open their text ↗</a>` : ""}
+        ${c.status === "offered" ? `<a href="/offer.html?opening=${encodeURIComponent(opening.id)}&client=${encodeURIComponent(c.client.id)}">Open their text →</a>` : ""}
       </li>`,
     )
     .join("");

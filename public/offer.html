@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body class="offer-page">
+    <p class="demo-nav"><a href="/">← Back to staff dashboard</a> <span class="muted small">(demo navigation; clients only see the page below)</span></p>
     <main class="card phone">
       <p class="muted small">Simulated text message from Juniper Salon</p>
       <h1>An earlier appointment opened up</h1>
@@ -45,15 +46,45 @@
           </dl>
           <p class="countdown" id="countdown"></p>`;
         expiresAt = me?.expiresAt;
-        actions.hidden = false;
+        const closed = closedMessage(state, me);
+        if (closed) {
+          showResult(closed.text, closed.outcome);
+        } else {
+          actions.hidden = false;
+        }
         tick();
+      }
+
+      // Explains why this client can no longer respond, or returns null if they can.
+      function closedMessage(state, me) {
+        if (!me) return { text: "This offer isn't for you.", outcome: "no_longer_available" };
+        if (me.status === "accepted") return { text: "You're booked. See you then!", outcome: "booked" };
+        if (me.status === "declined") return { text: "You declined this opening. You're still on the waitlist.", outcome: "declined" };
+        if (me.status !== "offered" || state.phase !== "offering") {
+          return { text: "Sorry, this opening is no longer available. You're still on the waitlist.", outcome: "no_longer_available" };
+        }
+        return null;
+      }
+
+      function showResult(text, outcome) {
+        resultEl.textContent = text;
+        resultEl.className = `result ${outcome}`;
+        resultEl.hidden = false;
+        actions.hidden = true;
       }
 
       function tick() {
         const el = document.querySelector("#countdown");
         if (!el || !expiresAt) return;
         const s = Math.max(0, Math.round((new Date(expiresAt) - Date.now()) / 1000));
-        el.textContent = s > 0 ? `Please reply within ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : "This offer's reply window has passed.";
+        if (!resultEl.hidden) {
+          el.textContent = "";
+        } else if (s > 0) {
+          el.textContent = `Please reply within ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+        } else {
+          el.textContent = "";
+          showResult("Sorry, the time to reply has passed and this opening is no longer available. You're still on the waitlist.", "no_longer_available");
+        }
       }
       setInterval(tick, 1000);
 
@@ -65,10 +96,7 @@
           body: JSON.stringify({ clientId, accept }),
         });
         const result = await response.json();
-        resultEl.textContent = result.message ?? result.error;
-        resultEl.className = `result ${result.outcome ?? "error"}`;
-        resultEl.hidden = false;
-        actions.hidden = true;
+        showResult(result.message ?? result.error, result.outcome ?? "error");
       }
       document.querySelector("#accept").onclick = () => respond(true);
       document.querySelector("#decline").onclick = () => respond(false);

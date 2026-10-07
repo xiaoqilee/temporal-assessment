@@ -21,7 +21,7 @@ Other commands: `npm test` (Workflow tests, no Docker needed), `npm run typechec
 
 1. Open <http://localhost:3000>. The waitlist at the bottom is pre-filled with fictional clients. Staff can add more with **+ Add a client** (name, mobile, service, preferred stylist, availability).
 2. Post an opening: **Cut & style · Carla · any afternoon time · reply window "1 minute (quick demo)"**. Three clients match (Ava, Chloe, Finn). The rest are listed as not eligible, with the reason.
-3. Ava gets the offer first. Click **Open their text ↗** to see the client's (simulated) text and **decline**. The offer moves to Chloe.
+3. Ava gets the offer first. Click **Open their text →** to see the client's (simulated) text and **decline**. The offer moves to Chloe.
 4. Don't reply for Chloe. After 1 minute she times out and the offer moves to Finn on its own.
 5. Accept as Finn. The opening shows **Filled**. Open Chloe's old link and press "Yes": she's told it's **no longer available**.
 6. Also try **Cancel current offer** and **Stop offering** on a new opening.
