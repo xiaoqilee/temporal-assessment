@@ -19,9 +19,11 @@ const STATUS_LABELS = {
   not_reached: "Not needed",
 };
 
-// Default the form to the next whole hour today.
+// Default the form to the next whole hour within salon hours (9 AM to 6 PM).
 const next = new Date();
 next.setHours(next.getHours() + 1, 0, 0, 0);
+if (next.getHours() >= 18) next.setDate(next.getDate() + 1);
+if (next.getHours() < 9 || next.getHours() >= 18) next.setHours(10);
 form.startsAt.value = toLocalInput(next);
 
 function toLocalInput(date) {
